@@ -10,7 +10,7 @@ import android.graphics.Rect;
  *
  * @author AigeStudio 2015-07-22
  * @author AigeStudio 2015-10-29
- *         为每一个装饰物的绘制方法增加一个含参data的重载方法
+ *         为每一个装饰物的绘制方法增加一个含参date的重载方法
  *         Add a parameter for each method.
  */
 public class DPDecor {
@@ -21,9 +21,9 @@ public class DPDecor {
      * @param canvas 绘制图形的画布 Canvas of image drew
      * @param rect   可以绘制的区域范围 Area you can draw
      * @param paint  画笔对象 Paint
-     * @param data   日期
+     * @param date   日期
      */
-    public void drawDecorTL(Canvas canvas, Rect rect, Paint paint, String data) {
+    public void drawDecorTL(Canvas canvas, Rect rect, Paint paint, String date) {
         drawDecorTL(canvas, rect, paint);
     }
 
@@ -41,9 +41,9 @@ public class DPDecor {
      * @param canvas 绘制图形的画布 Canvas of image drew
      * @param rect   可以绘制的区域范围 Area you can draw
      * @param paint  画笔对象 Paint
-     * @param data   日期
+     * @param date   日期
      */
-    public void drawDecorT(Canvas canvas, Rect rect, Paint paint, String data) {
+    public void drawDecorT(Canvas canvas, Rect rect, Paint paint, String date) {
         drawDecorT(canvas, rect, paint);
     }
 
@@ -61,9 +61,9 @@ public class DPDecor {
      * @param canvas 绘制图形的画布 Canvas of image drew
      * @param rect   可以绘制的区域范围 Area you can draw
      * @param paint  画笔对象 Paint
-     * @param data   日期
+     * @param date   日期
      */
-    public void drawDecorTR(Canvas canvas, Rect rect, Paint paint, String data) {
+    public void drawDecorTR(Canvas canvas, Rect rect, Paint paint, String date) {
         drawDecorTR(canvas, rect, paint);
     }
 
@@ -81,9 +81,9 @@ public class DPDecor {
      * @param canvas 绘制图形的画布 Canvas of image drew
      * @param rect   可以绘制的区域范围 Area you can draw
      * @param paint  画笔对象 Paint
-     * @param data   日期
+     * @param date   日期
      */
-    public void drawDecorL(Canvas canvas, Rect rect, Paint paint, String data) {
+    public void drawDecorL(Canvas canvas, Rect rect, Paint paint, String date) {
         drawDecorL(canvas, rect, paint);
     }
 
@@ -101,9 +101,9 @@ public class DPDecor {
      * @param canvas 绘制图形的画布 Canvas of image drew
      * @param rect   可以绘制的区域范围 Area you can draw
      * @param paint  画笔对象 Paint
-     * @param data   日期
+     * @param date   日期
      */
-    public void drawDecorR(Canvas canvas, Rect rect, Paint paint, String data) {
+    public void drawDecorR(Canvas canvas, Rect rect, Paint paint, String date) {
         drawDecorR(canvas, rect, paint);
     }
 
@@ -121,9 +121,9 @@ public class DPDecor {
      * @param canvas 绘制图形的画布 Canvas of image drew
      * @param rect   可以绘制的区域范围 Area you can draw
      * @param paint  画笔对象 Paint
-     * @param data   日期
+     * @param date   日期
      */
-    public void drawDecorBG(Canvas canvas, Rect rect, Paint paint, String data) {
+    public void drawDecorBG(Canvas canvas, Rect rect, Paint paint, String date) {
         drawDecorBG(canvas, rect, paint);
     }
 
@@ -133,4 +133,20 @@ public class DPDecor {
     public void drawDecorBG(Canvas canvas, Rect rect, Paint paint) {
 
     }
+
+    /**
+     * 绘制当前日期的文字代替原来的文字
+     * Draw text replace current date text
+     *
+     * @param canvas 绘制图形的画布 Canvas of image drew
+     * @param x      文字开始的x轴位置 The x-coordinate of the origin of the text being drawn
+     * @param y      文字开始的y轴位置 The y-coordinate of the baseline of the text being drawn
+     * @param paint  画笔对象 Paint
+     * @param date   日期
+     */
+    public void drawReplaceText(Canvas canvas, int x, float y, Paint paint, String date) {
+
+    }
+
+
 }

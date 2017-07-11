@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import cn.aigestudio.datepicker.bizs.calendars.DPCManager;
 import cn.aigestudio.datepicker.bizs.decors.DPDecor;
 import cn.aigestudio.datepicker.bizs.languages.DPLManager;
 import cn.aigestudio.datepicker.bizs.themes.DPTManager;
@@ -201,6 +202,10 @@ public class DatePicker extends LinearLayout {
 
     public void setDeferredDisplay(boolean isDeferredDisplay) {
         monthView.setDeferredDisplay(isDeferredDisplay);
+    }
+
+    public DPCManager getCManager(){
+        return monthView.getCManager();
     }
 
     /**

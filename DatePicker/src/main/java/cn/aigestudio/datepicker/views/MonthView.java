@@ -50,7 +50,7 @@ public class MonthView extends View {
 
     private final Map<String, List<Region>> REGION_SELECTED = new HashMap<>();
 
-    private DPCManager mCManager = DPCManager.getInstance();
+    private DPCManager mCManager = new DPCManager();
     private DPTManager mTManager = DPTManager.getInstance();
 
     protected Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG |
@@ -337,7 +337,7 @@ public class MonthView extends View {
 
     private void draw(Canvas canvas, Rect rect, DPInfo info) {
         drawBG(canvas, rect, info);
-        drawGregorian(canvas, rect, info.strG, info.isWeekend);
+        drawGregorian(canvas, rect, info);
         if (isFestivalDisplay) drawFestival(canvas, rect, info.strF, info.isFestival);
         drawDecor(canvas, rect, info);
     }
@@ -371,9 +371,9 @@ public class MonthView extends View {
             canvas.drawCircle(rect.centerX(), rect.centerY(), circleRadius / 2F, mPaint);
     }
 
-    private void drawGregorian(Canvas canvas, Rect rect, String str, boolean isWeekend) {
+    private void drawGregorian(Canvas canvas, Rect rect, DPInfo dpInfo) {
         mPaint.setTextSize(sizeTextGregorian);
-        if (isWeekend) {
+        if (dpInfo.isWeekend) {
             mPaint.setColor(mTManager.colorWeekend());
         } else {
             mPaint.setColor(mTManager.colorG());
@@ -381,7 +381,12 @@ public class MonthView extends View {
         float y = rect.centerY();
         if (!isFestivalDisplay)
             y = rect.centerY() + Math.abs(mPaint.ascent()) - (mPaint.descent() - mPaint.ascent()) / 2F;
-        canvas.drawText(str, rect.centerX(), y, mPaint);
+        if (dpInfo.isReplaceText){
+            String data = centerYear + "-" + centerMonth + "-" + dpInfo.strG;
+            mDPDecor.drawReplaceText(canvas,rect.centerX(),y,mPaint,data);
+        }else {
+            canvas.drawText(dpInfo.strG, rect.centerX(), y, mPaint);
+        }
     }
 
     private void drawFestival(Canvas canvas, Rect rect, String str, boolean isFestival) {
@@ -747,6 +752,10 @@ public class MonthView extends View {
             onDateChangeListener.onYearChange(centerYear);
             onDateChangeListener.onMonthChange(centerMonth);
         }
+    }
+
+    public DPCManager getCManager() {
+        return mCManager;
     }
 
     interface OnDateChangeListener {

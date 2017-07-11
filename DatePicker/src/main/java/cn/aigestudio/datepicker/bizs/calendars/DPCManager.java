@@ -1,6 +1,7 @@
 package cn.aigestudio.datepicker.bizs.calendars;
 
 import android.text.TextUtils;
+import android.util.SparseArray;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,20 +20,19 @@ import cn.aigestudio.datepicker.views.DatePicker;
  * @author AigeStudio 2015-06-12
  */
 public final class DPCManager {
-    private static final HashMap<Integer, HashMap<Integer, DPInfo[][]>> DATE_CACHE = new HashMap<>();
+    private static final SparseArray<HashMap<Integer, DPInfo[][]>> DATE_CACHE = new SparseArray<>();
 
-    private static final HashMap<String, Set<String>> DECOR_CACHE_BG = new HashMap<>();
-    private static final HashMap<String, Set<String>> DECOR_CACHE_TL = new HashMap<>();
-    private static final HashMap<String, Set<String>> DECOR_CACHE_T = new HashMap<>();
-    private static final HashMap<String, Set<String>> DECOR_CACHE_TR = new HashMap<>();
-    private static final HashMap<String, Set<String>> DECOR_CACHE_L = new HashMap<>();
-    private static final HashMap<String, Set<String>> DECOR_CACHE_R = new HashMap<>();
-
-    private static DPCManager sManager;
+    private HashMap<String, Set<String>> DECOR_CACHE_BG = new HashMap<>();
+    private HashMap<String, Set<String>> DECOR_CACHE_TL = new HashMap<>();
+    private HashMap<String, Set<String>> DECOR_CACHE_T = new HashMap<>();
+    private HashMap<String, Set<String>> DECOR_CACHE_TR = new HashMap<>();
+    private HashMap<String, Set<String>> DECOR_CACHE_L = new HashMap<>();
+    private HashMap<String, Set<String>> DECOR_CACHE_R = new HashMap<>();
+    private HashMap<String, Set<String>> REPLACE_CACHE_TEXT = new HashMap<>();
 
     private DPCalendar c;
 
-    private DPCManager() {
+    public DPCManager() {
         // 默认显示为中文日历
         String locale = Locale.getDefault().getCountry().toLowerCase();
         if (locale.equals("cn")) {
@@ -40,19 +40,6 @@ public final class DPCManager {
         } else {
             initCalendar(new DPUSCalendar());
         }
-    }
-
-    /**
-     * 获取月历管理器
-     * Get calendar manager
-     *
-     * @return 月历管理器
-     */
-    public static DPCManager getInstance() {
-        if (null == sManager) {
-            sManager = new DPCManager();
-        }
-        return sManager;
     }
 
     /**
@@ -133,6 +120,17 @@ public final class DPCManager {
     }
 
     /**
+     * 设置右上角有标识物的日期
+     * <p/>
+     * Set date which has decor on right
+     *
+     * @param date 日期列表 List of date
+     */
+    public void setReplaceText(List<String> date) {
+        setDecor(date, REPLACE_CACHE_TEXT);
+    }
+
+    /**
      * 获取指定年月的日历对象数组
      *
      * @param year  公历年
@@ -185,6 +183,7 @@ public final class DPCManager {
         Set<String> decorTR = DECOR_CACHE_TR.get(year + ":" + month);
         Set<String> decorL = DECOR_CACHE_L.get(year + ":" + month);
         Set<String> decorR = DECOR_CACHE_R.get(year + ":" + month);
+        Set<String> replaceText = REPLACE_CACHE_TEXT.get(year + ":" + month);
         for (int i = 0; i < info.length; i++) {
             for (int j = 0; j < info[i].length; j++) {
                 DPInfo tmp = new DPInfo();
@@ -216,6 +215,7 @@ public final class DPCManager {
                 if (null != decorTR && decorTR.contains(tmp.strG)) tmp.isDecorTR = true;
                 if (null != decorL && decorL.contains(tmp.strG)) tmp.isDecorL = true;
                 if (null != decorR && decorR.contains(tmp.strG)) tmp.isDecorR = true;
+                if (null != replaceText && replaceText.contains(tmp.strG)) tmp.isReplaceText = true;
                 info[i][j] = tmp;
             }
         }

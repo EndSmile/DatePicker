@@ -88,6 +88,8 @@ public class MainActivity extends Activity {
 //            }
 //        });
 
+        DatePicker picker = (DatePicker) findViewById(R.id.main_dp);
+
         // 自定义前景装饰物绘制示例 Example of custom date's foreground decor
         List<String> tmpTL = new ArrayList<>();
         tmpTL.add("2015-10-5");
@@ -97,7 +99,7 @@ public class MainActivity extends Activity {
         tmpTL.add("2015-10-9");
         tmpTL.add("2015-10-10");
         tmpTL.add("2015-10-11");
-        DPCManager.getInstance().setDecorTL(tmpTL);
+        picker.getCManager().setDecorTL(tmpTL);
 
         List<String> tmpTR = new ArrayList<>();
         tmpTR.add("2015-10-10");
@@ -107,14 +109,13 @@ public class MainActivity extends Activity {
         tmpTR.add("2015-10-14");
         tmpTR.add("2015-10-15");
         tmpTR.add("2015-10-16");
-        DPCManager.getInstance().setDecorTR(tmpTR);
+        picker.getCManager().setDecorTR(tmpTR);
 
-        DatePicker picker = (DatePicker) findViewById(R.id.main_dp);
         picker.setDate(2015, 10);
-        picker.setFestivalDisplay(false);
-        picker.setTodayDisplay(false);
+        picker.setFestivalDisplay(true);
+        picker.setTodayDisplay(true);
         picker.setHolidayDisplay(false);
-        picker.setDeferredDisplay(false);
+        picker.setDeferredDisplay(true);
         picker.setMode(DPMode.NONE);
         picker.setDPDecor(new DPDecor() {
             @Override

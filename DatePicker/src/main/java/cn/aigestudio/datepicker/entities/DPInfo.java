@@ -15,4 +15,5 @@ public class DPInfo {
     public boolean isSolarTerms, isFestival, isDeferred;
     public boolean isDecorBG;
     public boolean isDecorTL, isDecorT, isDecorTR, isDecorL, isDecorR;
+    public boolean isReplaceText;
 }
