@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class MainActivity extends Activity {
 //        });
 
         DatePicker picker = (DatePicker) findViewById(R.id.main_dp);
-
+        DPCManager cManager = picker.getCManager();
         // 自定义前景装饰物绘制示例 Example of custom date's foreground decor
         List<String> tmpTL = new ArrayList<>();
         tmpTL.add("2015-10-5");
@@ -99,7 +100,7 @@ public class MainActivity extends Activity {
         tmpTL.add("2015-10-9");
         tmpTL.add("2015-10-10");
         tmpTL.add("2015-10-11");
-        picker.getCManager().setDecorTL(tmpTL);
+        cManager.setDecorTL(tmpTL);
 
         List<String> tmpTR = new ArrayList<>();
         tmpTR.add("2015-10-10");
@@ -109,14 +110,17 @@ public class MainActivity extends Activity {
         tmpTR.add("2015-10-14");
         tmpTR.add("2015-10-15");
         tmpTR.add("2015-10-16");
-        picker.getCManager().setDecorTR(tmpTR);
+        cManager.setDecorTR(tmpTR);
+
+        List<String> tmpToday = Arrays.asList("2015-10-11");
+        cManager.setReplaceText(tmpToday);
 
         picker.setDate(2015, 10);
-        picker.setFestivalDisplay(true);
-        picker.setTodayDisplay(true);
+        picker.setFestivalDisplay(false);
+        picker.setTodayDisplay(false);
         picker.setHolidayDisplay(false);
-        picker.setDeferredDisplay(true);
-        picker.setMode(DPMode.NONE);
+        picker.setDeferredDisplay(false);
+        picker.setMode(DPMode.SINGLE);
         picker.setDPDecor(new DPDecor() {
             @Override
             public void drawDecorTL(Canvas canvas, Rect rect, Paint paint, String data) {
@@ -151,6 +155,11 @@ public class MainActivity extends Activity {
                         canvas.drawRect(rect, paint);
                         break;
                 }
+            }
+
+            @Override
+            public void drawReplaceText(Canvas canvas, int x, float y, Paint paint, String date) {
+                canvas.drawText("今天",x,y,paint);
             }
         });
 //        picker.setOnDateSelectedListener(new DatePicker.OnDateSelectedListener() {

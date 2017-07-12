@@ -20,7 +20,7 @@ import cn.aigestudio.datepicker.views.DatePicker;
  * @author AigeStudio 2015-06-12
  */
 public final class DPCManager {
-    private static final SparseArray<HashMap<Integer, DPInfo[][]>> DATE_CACHE = new SparseArray<>();
+    private SparseArray<HashMap<Integer, DPInfo[][]>> DATE_CACHE = new SparseArray<>();
 
     private HashMap<String, Set<String>> DECOR_CACHE_BG = new HashMap<>();
     private HashMap<String, Set<String>> DECOR_CACHE_TL = new HashMap<>();

@@ -208,6 +208,10 @@ public class DatePicker extends LinearLayout {
         return monthView.getCManager();
     }
 
+    public MonthView getMonthView() {
+        return monthView;
+    }
+
     /**
      * 设置单选监听器
      *

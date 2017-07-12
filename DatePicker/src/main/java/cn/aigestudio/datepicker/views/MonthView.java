@@ -88,6 +88,7 @@ public class MonthView extends View {
             isHolidayDisplay = true,
             isTodayDisplay = true,
             isDeferredDisplay = true;
+    private boolean isVerScroll = true;
 
     private Map<String, BGCircle> cirApr = new HashMap<>();
     private Map<String, BGCircle> cirDpr = new HashMap<>();
@@ -138,7 +139,7 @@ public class MonthView extends View {
                     if (Math.abs(lastPointX - event.getX()) > 100) {
                         mSlideMode = SlideMode.HOR;
                         isNewEvent = false;
-                    } else if (Math.abs(lastPointY - event.getY()) > 50) {
+                    } else if (Math.abs(lastPointY - event.getY()) > 50 && isVerScroll) {
                         mSlideMode = SlideMode.VER;
                         isNewEvent = false;
                     }
@@ -276,12 +277,14 @@ public class MonthView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawColor(mTManager.colorBG());
+        if (isVerScroll) {
+            draw(canvas, width * indexMonth, (indexYear - 1) * height, topYear, topMonth);
+            draw(canvas, width * indexMonth, (indexYear + 1) * height, bottomYear, bottomMonth);
+        }
 
-        draw(canvas, width * indexMonth, (indexYear - 1) * height, topYear, topMonth);
         draw(canvas, width * (indexMonth - 1), height * indexYear, leftYear, leftMonth);
         draw(canvas, width * indexMonth, indexYear * height, centerYear, centerMonth);
         draw(canvas, width * (indexMonth + 1), height * indexYear, rightYear, rightMonth);
-        draw(canvas, width * indexMonth, (indexYear + 1) * height, bottomYear, bottomMonth);
 
         drawBGCircle(canvas);
     }
@@ -381,10 +384,10 @@ public class MonthView extends View {
         float y = rect.centerY();
         if (!isFestivalDisplay)
             y = rect.centerY() + Math.abs(mPaint.ascent()) - (mPaint.descent() - mPaint.ascent()) / 2F;
-        if (dpInfo.isReplaceText){
+        if (null != mDPDecor && dpInfo.isReplaceText) {
             String data = centerYear + "-" + centerMonth + "-" + dpInfo.strG;
-            mDPDecor.drawReplaceText(canvas,rect.centerX(),y,mPaint,data);
-        }else {
+            mDPDecor.drawReplaceText(canvas, rect.centerX(), y, mPaint, data);
+        } else {
             canvas.drawText(dpInfo.strG, rect.centerX(), y, mPaint);
         }
     }
@@ -756,6 +759,10 @@ public class MonthView extends View {
 
     public DPCManager getCManager() {
         return mCManager;
+    }
+
+    public void setVerScroll(boolean verScroll) {
+        isVerScroll = verScroll;
     }
 
     interface OnDateChangeListener {
