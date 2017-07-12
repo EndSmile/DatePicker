@@ -23,9 +23,6 @@ import java.util.Map;
 import cn.aigestudio.datepicker.cons.DPMode;
 import cn.aigestudio.datepicker.entities.DPInfo;
 
-import static android.R.attr.height;
-import static android.R.attr.width;
-
 /**
  * Created by ldy on 2017/7/12.
  * 将monthview点击的处理拆分到这个类里
@@ -83,8 +80,8 @@ public class MonthSelect {
                         final String date = monthView.centerYear + "-" + monthView.centerMonth + "-" +
                                 monthView.mCManager.obtainDPInfo(monthView.centerYear, monthView.centerMonth)[i][j].strG;
                         BGCircle circle = createCircle(
-                                region.getBounds().centerX() + monthView.indexMonth * width,
-                                region.getBounds().centerY() + monthView.indexYear * height);
+                                region.getBounds().centerX() + monthView.indexMonth * monthView.width,
+                                region.getBounds().centerY() + monthView.indexYear * monthView.height);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                             ValueAnimator animScale1 =
                                     ObjectAnimator.ofInt(circle, "radius", 0, animZoomOut1);
@@ -156,8 +153,8 @@ public class MonthSelect {
                         } else {
                             dateSelected.add(date);
                             BGCircle circle = createCircle(
-                                    region.getBounds().centerX() + monthView.indexMonth * width,
-                                    region.getBounds().centerY() + monthView.indexYear * height);
+                                    region.getBounds().centerX() + monthView.indexMonth * monthView.width,
+                                    region.getBounds().centerY() + monthView.indexYear * monthView.height);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                                 ValueAnimator animScale1 =
                                         ObjectAnimator.ofInt(circle, "radius", 0, animZoomOut1);
@@ -228,6 +225,11 @@ public class MonthSelect {
         canvas.restore();
     }
 
+    public void release(){
+        cirApr.clear();
+        cirDpr.clear();
+        dateSelected.clear();
+    }
 
 
     private BGCircle createCircle(float x, float y) {

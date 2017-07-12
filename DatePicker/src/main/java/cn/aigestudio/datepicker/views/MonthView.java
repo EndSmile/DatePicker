@@ -63,7 +63,8 @@ public class MonthView extends View {
     private int rightYear, rightMonth;
     private int topYear, topMonth;
     private int bottomYear, bottomMonth;
-    private int width, height;
+    int width;
+    int height;
     private int sizeDecor, sizeDecor2x, sizeDecor3x;
     private int lastPointX, lastPointY;
     private int lastMoveX, lastMoveY;
@@ -620,14 +621,16 @@ public class MonthView extends View {
         indexYear = 0;
         indexMonth = 0;
         computeDate();
-        requestLayout();
-        invalidate();
+
 
         if (indicator != null) {
             indicator.updateView(indicator.getPreView(), getPreMonthDate(indicator));
             indicator.updateView(indicator.getCurrentView(), indicator.getDateStr(year, month));
             indicator.updateView(indicator.getPostView(), getPostMonthDate(indicator));
         }
+
+        monthSelect.release();
+        requestLayout();
     }
 
     void setFestivalDisplay(boolean isFestivalDisplay) {
