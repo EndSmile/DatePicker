@@ -1,32 +1,18 @@
 package cn.aigestudio.datepicker.views;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Region;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
-import android.os.Build;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cn.aigestudio.datepicker.bizs.calendars.DPCManager;
 import cn.aigestudio.datepicker.bizs.decors.DPDecor;
@@ -49,6 +35,7 @@ public class MonthView extends View {
     private final DPInfo[][] INFO_5 = new DPInfo[5][7];
     private final DPInfo[][] INFO_6 = new DPInfo[6][7];
     private final MonthSelect monthSelect;
+    private final Glow glow;
 
 
     DPCManager mCManager = new DPCManager();
@@ -85,7 +72,7 @@ public class MonthView extends View {
             isHolidayDisplay = true,
             isTodayDisplay = true,
             isDeferredDisplay = true;
-    private boolean isVerScroll = true;
+    private boolean isAllowVerScroll = true;
 
     private DateLimit dateLimit;
 
@@ -94,6 +81,7 @@ public class MonthView extends View {
         mScroller = new Scroller(context);
         mPaint.setTextAlign(Paint.Align.CENTER);
         monthSelect = new MonthSelect(this);
+        glow = new Glow(this);
     }
 
     @Override
@@ -133,7 +121,7 @@ public class MonthView extends View {
                     if (Math.abs(lastPointX - event.getX()) > 100) {
                         mSlideMode = SlideMode.HOR;
                         isNewEvent = false;
-                    } else if (Math.abs(lastPointY - event.getY()) > 50 && isVerScroll) {
+                    } else if (Math.abs(lastPointY - event.getY()) > 50 && isAllowVerScroll) {
                         mSlideMode = SlideMode.VER;
                         isNewEvent = false;
                     }
@@ -141,6 +129,11 @@ public class MonthView extends View {
                 if (mSlideMode == SlideMode.HOR) {
                     if (isInterruptHorScroller(moveX)) {
                         getParent().requestDisallowInterceptTouchEvent(false);
+                        if (moveX>0){
+                            glow.leftOnPull(Math.abs(moveX) / getWidth(), 1-event.getY() / getHeight());
+                        }else {
+                            glow.rightOnPull(Math.abs(moveX) / getWidth(), event.getY() / getHeight());
+                        }
                         return false;
                     }
                     int totalMoveX = (int) (lastPointX - event.getX()) + lastMoveX;
@@ -174,6 +167,7 @@ public class MonthView extends View {
                     moveX = event.getX() - lastPointX;
                     if (isInterruptHorScroller(moveX)) {
                         getParent().requestDisallowInterceptTouchEvent(false);
+                        glow.release();
                         return false;
                     }
                     if (Math.abs(lastPointX - event.getX()) > 25) {
@@ -203,6 +197,9 @@ public class MonthView extends View {
                 } else {
                     monthSelect.defineRegion((int) event.getX(), (int) event.getY());
                 }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                glow.release();
                 break;
         }
         return true;
@@ -299,7 +296,7 @@ public class MonthView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawColor(mTManager.colorBG());
-        if (isVerScroll) {
+        if (isAllowVerScroll) {
             draw(canvas, width * indexMonth, (indexYear - 1) * height, topYear, topMonth);
             draw(canvas, width * indexMonth, (indexYear + 1) * height, bottomYear, bottomMonth);
         }
@@ -309,6 +306,12 @@ public class MonthView extends View {
         draw(canvas, width * (indexMonth + 1), height * indexYear, rightYear, rightMonth);
 
         monthSelect.draw(canvas);
+
+        int save = canvas.save();
+        canvas.translate(width*indexMonth,indexYear*height);
+        glow.onDraw(canvas);
+        canvas.restoreToCount(save);
+//        canvas.drawRect(0,0,1080,227,mPaint);
     }
 
     private void draw(Canvas canvas, int x, int y, int year, int month) {
@@ -582,8 +585,8 @@ public class MonthView extends View {
         return mCManager;
     }
 
-    public void setVerScroll(boolean verScroll) {
-        isVerScroll = verScroll;
+    public void setAllowVerScroll(boolean allowVerScroll) {
+        isAllowVerScroll = allowVerScroll;
     }
 
     public void setDateLimit(DateLimit dateLimit) {
