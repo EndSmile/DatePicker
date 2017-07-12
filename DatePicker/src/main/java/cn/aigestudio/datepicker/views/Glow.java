@@ -16,7 +16,6 @@ public class Glow {
     private EdgeEffectCompat mLeftGlow;
     private EdgeEffectCompat mRightGlow;
     private View view;
-    private Paint paint;
 
     public Glow(View view) {
         this.view = view;
@@ -29,9 +28,8 @@ public class Glow {
                 int restoreCount = canvas.save();
                 canvas.rotate(270);
                 canvas.translate(-view.getHeight(), 0);
-                if (mLeftGlow.draw(canvas)) {//绘制边缘效果图，如果绘制需要进行动画效果返回true
-                    Log.d("Glow", "leftDraw");
-                    ViewCompat.postInvalidateOnAnimation(view);//进行动画
+                if (mLeftGlow.draw(canvas)) {
+                    ViewCompat.postInvalidateOnAnimation(view);
                 }
                 canvas.restoreToCount(restoreCount);
             }
@@ -39,11 +37,10 @@ public class Glow {
         if (mRightGlow != null) {
             if (!mRightGlow.isFinished()) {
                 int restoreCount = canvas.save();
-                //下面两行代码的作用就是把画布平移旋转到底部展示，并让效果向上显示
                 canvas.rotate(90);
                 canvas.translate(0, -view.getWidth());
-                if (mRightGlow.draw(canvas)) {//绘制边缘效果图，如果绘制需要进行动画效果返回true
-                    ViewCompat.postInvalidateOnAnimation(view);//进行动画
+                if (mRightGlow.draw(canvas)) {
+                    ViewCompat.postInvalidateOnAnimation(view);
                 }
                 canvas.restoreToCount(restoreCount);
             }
@@ -60,11 +57,7 @@ public class Glow {
 
     public void rightOnPull(float deltaDistance, float displacement) {
         ensureRightGlow();
-        //由于翻转180度显示，所以X轴坐标需要以中心翻转
         mRightGlow.onPull(deltaDistance, displacement);
-
-        Log.d("Glow", "deltaDistance:" + deltaDistance);
-        Log.d("Glow", "displacement:" + displacement);
 
         if (mRightGlow != null && (!mRightGlow.isFinished())) {
             ViewCompat.postInvalidateOnAnimation(view);

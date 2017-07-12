@@ -6,7 +6,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
@@ -14,6 +18,7 @@ import android.widget.Scroller;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.aigestudio.datepicker.Indicator.DateIndicator;
 import cn.aigestudio.datepicker.bizs.calendars.DPCManager;
 import cn.aigestudio.datepicker.bizs.decors.DPDecor;
 import cn.aigestudio.datepicker.bizs.themes.DPTManager;
@@ -75,9 +80,15 @@ public class MonthView extends View {
     private boolean isAllowVerScroll = true;
 
     private DateLimit dateLimit;
+    private boolean isRightScrolling;
+    private DateIndicator indicator;
 
     public MonthView(Context context) {
-        super(context);
+        this(context,null);
+    }
+
+    public MonthView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
         mScroller = new Scroller(context);
         mPaint.setTextAlign(Paint.Align.CENTER);
         monthSelect = new MonthSelect(this);
@@ -94,11 +105,43 @@ public class MonthView extends View {
         super.onRestoreInstanceState(state);
     }
 
+    private float lastScrollMoveX = -1;
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             invalidate();
+
+            //移动指示器
+            if (indicator != null) {
+                float moveX = Math.abs(mScroller.getCurrX()) % width;
+                if (moveX != lastScrollMoveX) {
+                    if ((isRightScrolling && mScroller.getCurrX() < 0)) {
+                        moveX = width - moveX;
+                    }
+                    if (!isRightScrolling && mScroller.getCurrX() > 0) {
+                        moveX = width - moveX;
+                    }
+                    lastScrollMoveX = moveX;
+                    if (moveX == 0 || moveX == width) {
+                        indicator.updateView(indicator.getCurrentView(), indicator.getDateStr(centerYear, centerMonth));
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                indicator.onPageScrolled(true, 0, 0);
+                                indicator.updateView(indicator.getPreView(), getPreMonthDate(indicator));
+                                indicator.updateView(indicator.getPostView(), getPostMonthDate(indicator));
+                            }
+                        });
+
+                    } else {
+                        if (!isRightScrolling)
+                            indicator.onPageScrolled(isRightScrolling, 1 - moveX / width, (int) (width - moveX));
+                        else
+                            indicator.onPageScrolled(isRightScrolling, moveX / width, (int) moveX);
+                    }
+                }
+            }
         } else {
             requestLayout();
         }
@@ -117,6 +160,7 @@ public class MonthView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 float moveX = event.getX() - lastPointX;
+                isRightScrolling = moveX < 0;
                 if (isNewEvent) {
                     if (Math.abs(lastPointX - event.getX()) > 100) {
                         mSlideMode = SlideMode.HOR;
@@ -205,6 +249,43 @@ public class MonthView extends View {
         return true;
     }
 
+    public void preDay() {
+        if (isStartDate()) {
+            return;
+        }
+
+        isRightScrolling = false;
+
+        indexMonth--;
+        centerMonth = (centerMonth - 1) % 12;
+        if (centerMonth == 0) {
+            centerMonth = 12;
+            centerYear--;
+        }
+        computeDate();
+        smoothScrollTo(width * indexMonth, indexYear * height);
+        lastMoveX = width * indexMonth;
+
+    }
+
+    public void postDay() {
+        if (isEndDate()) {
+            return;
+        }
+
+        isRightScrolling = true;
+
+        indexMonth++;
+        centerMonth = (centerMonth + 1) % 13;
+        if (centerMonth == 0) {
+            centerMonth = 1;
+            centerYear++;
+        }
+        computeDate();
+        smoothScrollTo(width * indexMonth, indexYear * height);
+        lastMoveX = width * indexMonth;
+    }
+
     private boolean isInterruptHorScroller(float moveX) {
         if (moveX > 0) {
             if (isStartDate()) {
@@ -226,6 +307,26 @@ public class MonthView extends View {
 
     private boolean isEndDate() {
         return dateLimit != null && centerYear == dateLimit.endYear && centerMonth == dateLimit.endMonth;
+    }
+
+    @NonNull
+    private String getPostMonthDate(DateIndicator indicator) {
+        int year = centerYear, month = centerMonth;
+        if (++month > 12) {
+            month = 1;
+            year++;
+        }
+        return indicator.getDateStr(year, month);
+    }
+
+    @NonNull
+    private String getPreMonthDate(DateIndicator indicator) {
+        int year = centerYear, month = centerMonth;
+        if (--month < 1) {
+            month = 12;
+            year--;
+        }
+        return indicator.getDateStr(year, month);
     }
 
     @Override
@@ -506,7 +607,14 @@ public class MonthView extends View {
         return monthSelect.getDPMode();
     }
 
-    void setDate(int year, int month) {
+    public void setDate(int year, int month) {
+        if (month < 1) {
+            month = 1;
+        }
+        if (month > 12) {
+            month = 12;
+        }
+
         centerYear = year;
         centerMonth = month;
         indexYear = 0;
@@ -514,6 +622,12 @@ public class MonthView extends View {
         computeDate();
         requestLayout();
         invalidate();
+
+        if (indicator != null) {
+            indicator.updateView(indicator.getPreView(), getPreMonthDate(indicator));
+            indicator.updateView(indicator.getCurrentView(), indicator.getDateStr(year, month));
+            indicator.updateView(indicator.getPostView(), getPostMonthDate(indicator));
+        }
     }
 
     void setFestivalDisplay(boolean isFestivalDisplay) {
@@ -591,6 +705,22 @@ public class MonthView extends View {
 
     public void setDateLimit(DateLimit dateLimit) {
         this.dateLimit = dateLimit;
+    }
+
+    public void setIndicator(DateIndicator indicator) {
+        this.indicator = indicator;
+    }
+
+    public DateLimit getDateLimit() {
+        return dateLimit;
+    }
+
+    public int getCenterYear() {
+        return centerYear;
+    }
+
+    public int getCenterMonth() {
+        return centerMonth;
     }
 
     interface OnDateChangeListener {

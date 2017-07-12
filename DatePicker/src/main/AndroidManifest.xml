@@ -1,1 +1,9 @@
-<manifest package="cn.aigestudio.datepicker"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.aigestudio.datepicker">
+
+    <application>
+        <activity
+            android:name=".ymselect.YearMonthWheelActivity"
+            android:theme="@style/datepicker_Translucent.BottomPop" />
+    </application>
+</manifest>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_wheel_group_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#e5e5e5"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="#ffffff"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:id="@+id/tv_wheel_group_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="取消"
+                android:textColor="#626262"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tv_wheel_group_certain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:text="完成"
+                android:textColor="#0184ff"
+                android:textSize="16dp" />
+        </FrameLayout>
+
+        <cn.aigestudio.datepicker.wheeldate.WheelGroup
+            android:id="@+id/wp_wheel_group"
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            android:background="#f3f4f8" />
+
+    </LinearLayout>
+</FrameLayout>
