@@ -23,6 +23,7 @@ import java.util.List;
 import cn.aigestudio.datepicker.bizs.calendars.DPCManager;
 import cn.aigestudio.datepicker.bizs.decors.DPDecor;
 import cn.aigestudio.datepicker.cons.DPMode;
+import cn.aigestudio.datepicker.entities.DateLimit;
 import cn.aigestudio.datepicker.views.DatePicker;
 
 /**
@@ -115,12 +116,14 @@ public class MainActivity extends Activity {
         List<String> tmpToday = Arrays.asList("2015-10-11");
         cManager.setReplaceText(tmpToday);
 
+        picker.getMonthView().setDateLimit(new DateLimit(2015,8,2016,1));
+
         picker.setDate(2015, 10);
         picker.setFestivalDisplay(false);
         picker.setTodayDisplay(false);
         picker.setHolidayDisplay(false);
         picker.setDeferredDisplay(false);
-        picker.setMode(DPMode.SINGLE);
+        picker.setMode(DPMode.MULTIPLE);
         picker.setDPDecor(new DPDecor() {
             @Override
             public void drawDecorTL(Canvas canvas, Rect rect, Paint paint, String data) {

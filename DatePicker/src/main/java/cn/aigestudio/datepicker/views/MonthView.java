@@ -33,6 +33,7 @@ import cn.aigestudio.datepicker.bizs.decors.DPDecor;
 import cn.aigestudio.datepicker.bizs.themes.DPTManager;
 import cn.aigestudio.datepicker.cons.DPMode;
 import cn.aigestudio.datepicker.entities.DPInfo;
+import cn.aigestudio.datepicker.entities.DateLimit;
 
 /**
  * MonthView
@@ -86,6 +87,8 @@ public class MonthView extends View {
             isDeferredDisplay = true;
     private boolean isVerScroll = true;
 
+    private DateLimit dateLimit;
+
     public MonthView(Context context) {
         super(context);
         mScroller = new Scroller(context);
@@ -115,6 +118,7 @@ public class MonthView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        getParent().requestDisallowInterceptTouchEvent(true);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mScroller.forceFinished(true);
@@ -124,6 +128,7 @@ public class MonthView extends View {
                 lastPointY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                float moveX = event.getX() - lastPointX;
                 if (isNewEvent) {
                     if (Math.abs(lastPointX - event.getX()) > 100) {
                         mSlideMode = SlideMode.HOR;
@@ -134,6 +139,10 @@ public class MonthView extends View {
                     }
                 }
                 if (mSlideMode == SlideMode.HOR) {
+                    if (isInterruptHorScroller(moveX)) {
+                        getParent().requestDisallowInterceptTouchEvent(false);
+                        return false;
+                    }
                     int totalMoveX = (int) (lastPointX - event.getX()) + lastMoveX;
                     smoothScrollTo(totalMoveX, indexYear * height);
                 } else if (mSlideMode == SlideMode.VER) {
@@ -162,6 +171,11 @@ public class MonthView extends View {
                         monthSelect.defineRegion((int) event.getX(), (int) event.getY());
                     }
                 } else if (mSlideMode == SlideMode.HOR) {
+                    moveX = event.getX() - lastPointX;
+                    if (isInterruptHorScroller(moveX)) {
+                        getParent().requestDisallowInterceptTouchEvent(false);
+                        return false;
+                    }
                     if (Math.abs(lastPointX - event.getX()) > 25) {
                         if (lastPointX > event.getX() &&
                                 Math.abs(lastPointX - event.getX()) >= criticalWidth) {
@@ -192,6 +206,29 @@ public class MonthView extends View {
                 break;
         }
         return true;
+    }
+
+    private boolean isInterruptHorScroller(float moveX) {
+        if (moveX > 0) {
+            if (isStartDate()) {
+                getParent().requestDisallowInterceptTouchEvent(false);
+                return true;
+            }
+        } else {
+            if (isEndDate()) {
+                getParent().requestDisallowInterceptTouchEvent(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isStartDate() {
+        return dateLimit != null && centerYear == dateLimit.startYear && centerMonth == dateLimit.startMonth;
+    }
+
+    private boolean isEndDate() {
+        return dateLimit != null && centerYear == dateLimit.endYear && centerMonth == dateLimit.endMonth;
     }
 
     @Override
@@ -547,6 +584,10 @@ public class MonthView extends View {
 
     public void setVerScroll(boolean verScroll) {
         isVerScroll = verScroll;
+    }
+
+    public void setDateLimit(DateLimit dateLimit) {
+        this.dateLimit = dateLimit;
     }
 
     interface OnDateChangeListener {
