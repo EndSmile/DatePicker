@@ -14,19 +14,22 @@ public class DatePickerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date_picker);
-        final DatePickerFragment fragment = new DatePickerFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commitNow();
-        getWindow().getDecorView().post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        MonthView monthView = fragment.getMonthView();
-                        monthView.setDate(2017,10);
-                    }
-                }
-        );
+//        final DatePickerFragment fragment = new DatePickerFragment();
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.fragment_container, fragment)
+//                .commitNow();
+//        getWindow().getDecorView().post(
+//                new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        MonthView monthView = fragment.getMonthView();
+//                        monthView.setDate(2017,10);
+//                    }
+//                }
+//        );
 
+        DatePickerFragment fragment = (DatePickerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_datepicker);
+        MonthView monthView = fragment.getMonthView();
+        monthView.setDate(2017, 10);
     }
 }
