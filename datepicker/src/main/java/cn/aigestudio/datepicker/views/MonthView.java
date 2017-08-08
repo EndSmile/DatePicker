@@ -166,7 +166,6 @@ public class MonthView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 float moveX = event.getX() - lastPointX;
-                isRightScrolling = moveX < 0;
                 if (isNewEvent) {
                     if (Math.abs(lastPointX - event.getX()) > 100) {
                         mSlideMode = SlideMode.HOR;
@@ -190,6 +189,7 @@ public class MonthView extends View {
                         }
                         return false;
                     }
+                    isRightScrolling = moveX < 0;
                     int totalMoveX = (int) (lastPointX - event.getX()) + lastMoveX;
                     smoothScrollTo(totalMoveX, indexYear * height);
                 } else if (mSlideMode == SlideMode.VER) {
@@ -222,6 +222,9 @@ public class MonthView extends View {
                     if (isInterruptHorScroller(moveX)) {
                         getParent().requestDisallowInterceptTouchEvent(false);
                         glow.release();
+                        computeDate();
+                        smoothScrollTo(width * indexMonth, indexYear * height);
+                        lastMoveX = width * indexMonth;
                         return false;
                     }
                     if (Math.abs(lastPointX - event.getX()) > 25) {
@@ -638,6 +641,16 @@ public class MonthView extends View {
     }
 
     public void setDate(int year, int month) {
+        if (centerMonth != 0) {
+            //防止二次设置时界面为空
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    scrollTo(0, 0);
+                }
+            });
+        }
+
         if (month < 1) {
             month = 1;
         }
