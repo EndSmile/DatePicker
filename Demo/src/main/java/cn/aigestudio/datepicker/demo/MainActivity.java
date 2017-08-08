@@ -24,6 +24,7 @@ import cn.aigestudio.datepicker.bizs.calendars.DPCManager;
 import cn.aigestudio.datepicker.bizs.decors.DPDecor;
 import cn.aigestudio.datepicker.cons.DPMode;
 import cn.aigestudio.datepicker.entities.DateLimit;
+import cn.aigestudio.datepicker.entities.YMDDate;
 import cn.aigestudio.datepicker.views.DatePicker;
 
 /**
@@ -116,7 +117,7 @@ public class MainActivity extends Activity {
         List<String> tmpToday = Arrays.asList("2015-10-11");
         cManager.setReplaceText(tmpToday);
 
-        picker.getMonthView().setDateLimit(new DateLimit(2015,8,2016,1));
+        picker.getMonthView().setDateLimit(new DateLimit(new YMDDate(2015,8,1),new YMDDate(2016,1,1)));
 
         picker.setDate(2015, 10);
         picker.setFestivalDisplay(false);

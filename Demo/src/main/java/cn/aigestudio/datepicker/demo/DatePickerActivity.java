@@ -1,9 +1,7 @@
 package cn.aigestudio.datepicker.demo;
 
-import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
 import cn.aigestudio.datepicker.views.DatePickerFragment;
 import cn.aigestudio.datepicker.views.MonthView;
@@ -31,5 +29,8 @@ public class DatePickerActivity extends AppCompatActivity {
         DatePickerFragment fragment = (DatePickerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_datepicker);
         MonthView monthView = fragment.getMonthView();
         monthView.setDate(2017, 10);
+        monthView.setAllowVerScroll(false);
+        monthView.setHolidayDisplay(false);
+        monthView.setFestivalDisplay(false);
     }
 }
